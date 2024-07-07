@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ferrari Timeline & Dew Point Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .countdown, .dew-point, .explanation, .details {
+            background: #fff;
+            padding: 20px;
+            margin: 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        h1 {
+            font-size: 24px;
+            margin: 0;
+        }
+        p {
+            font-size: 18px;
+            margin: 5px 0;
+        }
+        .scale {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 10px;
+        }
+        .scale div {
+            padding: 5px;
+            border-radius: 5px;
+            color: #fff;
+        }
+        .oppressive { background-color: #d9534f; }
+        .very-humid { background-color: #f0ad4e; }
+        .humid { background-color: #5bc0de; }
+        .comfortable { background-color: #5cb85c; }
+        .dry { background-color: #0275d8; }
+        .explanation p {
+            font-size: 16px;
+            text-align: left;
+        }
+        .done {
+            background-color: #d9534f;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="countdown">
+        <h1>Countdown to Head Over to Switch Ferrari Timeline to Quiet Mode</h1>
+        <p id="quiet-mode"></p>
+        <p>Counting down to 12:45</p>
+    </div>
+
+    <div class="countdown">
+        <h1>Countdown to Head Over to Switch Ferrari Timeline to Normal Mode</h1>
+        <p id="normal-mode"></p>
+        <p>Counting down to 13:45</p>
+    </div>
+
+    <div class="dew-point">
+        <h1>Current Dew Point in 33884</h1>
+        <p id="dew-point"></p>
+        <p>High: <span id="high-dew-point"></span> at <span id="high-dew-time"></span></p>
+        <p>Low: <span id="low-dew-point"></span> at <span id="low-dew-time"></span></p>
+        <div class="scale">
+            <div class="oppressive">Oppressive</div>
+            <div class="very-humid">Very Humid</div>
+            <div class="humid">Humid</div>
+            <div class="comfortable">Comfortable</div>
+            <div class="dry">Dry</div>
+        </div>
+    </div>
+
+    <div class="explanation">
+        <h1>Dew Point vs. Performance</h1>
+        <p>The dew point is the temperature at which air becomes saturated with moisture and can hold no more water in the form of vapor, leading to condensation. In terms of human comfort and performance:</p>
+        <ul>
+            <li><b>Dry (Under 50°F / 10°C):</b> Air feels dry and comfortable. Ideal for physical activities.</li>
+            <li><b>Comfortable (50°F - 59°F / 10°C - 15°C):</b> Pleasant humidity levels, suitable for most activities.</li>
+            <li><b>Humid (60°F - 69°F / 16°C - 20°C):</b> Noticeable humidity, might start to feel uncomfortable during strenuous activities.</li>
+            <li><b>Very Humid (70°F - 74°F / 21°C - 23°C):</b> High humidity levels, making it difficult to cool down through sweat. Performance can be affected.</li>
+            <li><b>Oppressive (75°F / 24°C and above):</b> Extremely high humidity, leading to significant discomfort and reduced performance. Heat-related illnesses become a risk.</li>
+        </ul>
+    </div>
+
+    <div class="details">
+        <h1>Current Conditions</h1>
+        <p id="current-temperature"></p>
+        <p id="current-humidity"></p>
+        <p>High Temperature: <span id="high-temp"></span> at <span id="high-temp-time"></span></p>
+        <p>Low Temperature: <span id="low-temp"></span> at <span id="low-temp-time"></span></p>
+    </div>
+
+    <script>
+        function updateCountdowns() {
+            const now = new Date();
+
+            // Set the countdown dates
+            const quietModeTime = new Date();
+            quietModeTime.setHours(12, 45, 0);
+            const normalModeTime = new Date();
+            normalModeTime.setHours(13, 45, 0);
+
+            // Reset countdowns at midnight
+            if (now.getHours() === 0 && now.getMinutes() === 0 && now.getSeconds() === 0) {
+                document.getElementById('quiet-mode').classList.remove('done');
+                document.getElementById('normal-mode').classList.remove('done');
+            }
+
+            // Update countdowns
+            updateCountdown('quiet-mode', quietModeTime, now);
+            updateCountdown('normal-mode', normalModeTime, now);
+        }
+
+        function updateCountdown(elementId, targetTime, now) {
+            const distance = targetTime - now;
+
+            if (distance > 0) {
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.getElementById(elementId).innerHTML = `${hours}h ${minutes}m ${seconds}s`;
+            } else {
+                document.getElementById(elementId).innerHTML = "Task Done";
+                document.getElementById(elementId).classList.add('done');
+            }
+        }
+
+        function updateWeatherData() {
+            fetch('https://api.weatherapi.com/v1/forecast.json?key=e905b74688f544ccb59151915240707&q=33884&days=1&aqi=no&alerts=no')
+                .then(response => response.json())
+                .then(data => {
+                    const current = data.current;
+                    const forecast = data.forecast.forecastday[0].hour;
+
+                    // Dew Point
+                    const dewPointC = current.dewpoint_c;
+                    const dewPointF = (dewPointC * 9/5) + 32;
+                    document.getElementById('dew-point').innerText = `${dewPointC.toFixed(1)}°C / ${dewPointF.toFixed(1)}°F`;
+
+                    const highDewPoint = Math.max(...forecast.map(hour => hour.dewpoint_c));
+                    const lowDewPoint = Math.min(...forecast.map(hour => hour.dewpoint_c));
+                    const highDewTime = forecast.find(hour => hour.dewpoint_c === highDewPoint).time.split(' ')[1];
+                    const lowDewTime = forecast.find(hour => hour.dewpoint_c === lowDewPoint).time.split(' ')[1];
+
+                    document.getElementById('high-dew-point').innerText = `${highDewPoint.toFixed(1)}°C / ${(highDewPoint * 9/5 + 32).toFixed(1)}°F`;
+                    document.getElementById('high-dew-time').innerText = highDewTime;
+                    document.getElementById('low-dew-point').innerText = `${lowDewPoint.toFixed(1)}°C / ${(lowDewPoint * 9/5 + 32).toFixed(1)}°F`;
+                    document.getElementById('low-dew-time').innerText = lowDewTime;
+
+                    // Temperature
+                    const currentTempC = current.temp_c;
+                    const currentTempF = current.temp_f;
+                    document.getElementById('current-temperature').innerText = `Temperature: ${currentTempC.toFixed(1)}°C / ${currentTempF.toFixed(1)}°F`;
+
+                    const highTemp = Math.max(...forecast.map(hour => hour.temp_c));
+                    const lowTemp = Math.min(...forecast.map(hour => hour.temp_c));
+                    const highTempTime = forecast.find(hour => hour.temp_c === highTemp).time.split(' ')[1];
+                    const lowTempTime = forecast.find(hour => hour.temp_c === lowTemp).time.split(' ')[1];
+
+                    document.getElementById('high-temp').innerText = `${highTemp.toFixed(1)}°C / ${(highTemp * 9/5 + 32).toFixed(1)}°F`;
+                    document.getElementById('high-temp-time').innerText = highTempTime;
+                    document.getElementById('low-temp').innerText = `${lowTemp.toFixed(1)}°C / ${(lowTemp * 9/5 + 32).toFixed(1)}°F`;
+                    document.getElementById('low-temp-time').innerText = lowTempTime;
+
+                    // Humidity
+                    const humidity = current.humidity;
+                    document.getElementById('current-humidity').innerText = `Humidity: ${humidity}%`;
+
+                    const scale = document.querySelector('.scale');
+                    scale.querySelectorAll('div').forEach(div => div.style.border = 'none');
+
+                    if (dewPointF >= 75) {
+                        scale.querySelector('.oppressive').style.border = '2px solid black';
+                    } else if (dewPointF >= 70) {
+                        scale.querySelector('.very-humid').style.border = '2px solid black';
+                    } else if (dewPointF >= 60) {
+                        scale.querySelector('.humid').style.border = '2px solid black';
+                    } else if (dewPointF >= 50) {
+                        scale.querySelector('.comfortable').style.border = '2px solid black';
+                    } else {
+                        scale.querySelector('.dry').style.border = '2px solid black';
+                    }
+                })
+                .catch(error => console.error('Error fetching weather data:', error));
+        }
+
+        // Update countdowns every second
+        setInterval(updateCountdowns, 1000);
+
+        // Update weather data every minute
+        setInterval(updateWeatherData, 60000);
+        updateWeatherData();  // Initial call to set the weather data on page load
+    </script>
+</body>
+</html>
