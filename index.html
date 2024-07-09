@@ -6,7 +6,7 @@
     <title>Ferrari Timeline Dashboard</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: Verdana, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -15,7 +15,7 @@
             margin: 0;
             background-color: #f0f0f0;
         }
-        .countdown, .explanation, .details {
+        .countdown, .details {
             background: #fff;
             padding: 20px;
             margin: 10px;
@@ -31,29 +31,21 @@
             font-size: 18px;
             margin: 5px 0;
         }
-        .scale {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 10px;
-        }
-        .scale div {
-            padding: 5px;
-            border-radius: 5px;
-            color: #fff;
-        }
-        .oppressive { background-color: #d9534f; }
-        .very-humid { background-color: #f0ad4e; }
-        .humid { background-color: #5bc0de; }
-        .comfortable { background-color: #5cb85c; }
-        .dry { background-color: #0275d8; }
-        .explanation p {
-            font-size: 16px;
-            text-align: left;
-        }
-        .done {
+        .task-done {
             background-color: #d9534f;
             color: white;
             font-weight: bold;
+            font-size: 24px;
+            margin-top: 10px;
+        }
+        .current-temperature {
+            font-size: 36px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .current-condition {
+            font-size: 24px;
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -71,24 +63,13 @@
         <p>Counting down to 13:45</p>
     </div>
 
-    <div class="explanation">
-        <h1>Dew Point vs. Performance</h1>
-        <p>The dew point is the temperature at which air becomes saturated with moisture and can hold no more water in the form of vapor, leading to condensation. In terms of human comfort and performance:</p>
-        <ul>
-            <li><b>Dry (Under 50°F / 10°C):</b> Air feels dry and comfortable. Ideal for physical activities.</li>
-            <li><b>Comfortable (50°F - 59°F / 10°C - 15°C):</b> Pleasant humidity levels, suitable for most activities.</li>
-            <li><b>Humid (60°F - 69°F / 16°C - 20°C):</b> Noticeable humidity, might start to feel uncomfortable during strenuous activities.</li>
-            <li><b>Very Humid (70°F - 74°F / 21°C - 23°C):</b> High humidity levels, making it difficult to cool down through sweat. Performance can be affected.</li>
-            <li><b>Oppressive (75°F / 24°C and above):</b> Extremely high humidity, leading to significant discomfort and reduced performance. Heat-related illnesses become a risk.</li>
-        </ul>
-    </div>
-
     <div class="details">
         <h1>Current Conditions</h1>
-        <p id="current-temperature"></p>
-        <p id="current-humidity"></p>
+        <p id="current-temperature" class="current-temperature"></p>
+        <p id="current-condition" class="current-condition"></p>
         <p>High Temperature: <span id="high-temp"></span> at <span id="high-temp-time"></span></p>
         <p>Low Temperature: <span id="low-temp"></span> at <span id="low-temp-time"></span></p>
+        <p id="current-humidity"></p>
     </div>
 
     <script>
@@ -103,8 +84,8 @@
 
             // Reset countdowns at midnight
             if (now.getHours() === 0 && now.getMinutes() === 0 && now.getSeconds() === 0) {
-                document.getElementById('quiet-mode').classList.remove('done');
-                document.getElementById('normal-mode').classList.remove('done');
+                document.getElementById('quiet-mode').classList.remove('task-done');
+                document.getElementById('normal-mode').classList.remove('task-done');
             }
 
             // Update countdowns
@@ -123,7 +104,7 @@
                 document.getElementById(elementId).innerHTML = `${hours}h ${minutes}m ${seconds}s`;
             } else {
                 document.getElementById(elementId).innerHTML = "Task Done";
-                document.getElementById(elementId).classList.add('done');
+                document.getElementById(elementId).classList.add('task-done');
             }
         }
 
@@ -139,10 +120,41 @@
                     const currentTempF = current.temp_f;
                     document.getElementById('current-temperature').innerText = `Temperature: ${currentTempC.toFixed(1)}°C / ${currentTempF.toFixed(1)}°F`;
 
+                    // Current Weather Condition
+                    const conditionText = current.condition.text;
+                    document.getElementById('current-condition').innerText = conditionText;
+
+                    // Change background color based on weather condition
+                    let conditionColor;
+                    switch (conditionText.toLowerCase()) {
+                        case 'sunny':
+                            conditionColor = '#ffeb3b';
+                            break;
+                        case 'partly cloudy':
+                        case 'mostly cloudy':
+                            conditionColor = '#90a4ae';
+                            break;
+                        case 'cloudy':
+                            conditionColor = '#607d8b';
+                            break;
+                        case 'rainy':
+                        case 'light rain':
+                        case 'heavy rain':
+                            conditionColor = '#4caf50';
+                            break;
+                        case 'thunderstorm':
+                            conditionColor = '#f44336';
+                            break;
+                        default:
+                            conditionColor = '#ffffff';
+                    }
+                    document.getElementById('current-condition').style.backgroundColor = conditionColor;
+
+                    // High and Low Temperature
                     const highTemp = Math.max(...forecast.map(hour => hour.temp_c));
                     const lowTemp = Math.min(...forecast.map(hour => hour.temp_c));
-                    const highTempTime = forecast.find(hour => hour.temp_c === highTemp).time.split(' ')[1];
-                    const lowTempTime = forecast.find(hour => hour.temp_c === lowTemp).time.split(' ')[1];
+                    const highTempTime = formatTime(forecast.find(hour => hour.temp_c === highTemp).time.split(' ')[1]);
+                    const lowTempTime = formatTime(forecast.find(hour => hour.temp_c === lowTemp).time.split(' ')[1]);
 
                     document.getElementById('high-temp').innerText = `${highTemp.toFixed(1)}°C / ${(highTemp * 9/5 + 32).toFixed(1)}°F`;
                     document.getElementById('high-temp-time').innerText = highTempTime;
@@ -154,6 +166,13 @@
                     document.getElementById('current-humidity').innerText = `Humidity: ${humidity}%`;
                 })
                 .catch(error => console.error('Error fetching weather data:', error));
+        }
+
+        function formatTime(time24) {
+            let [hours, minutes] = time24.split(':').map(Number);
+            const period = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12 || 12;
+            return `${hours}:${minutes < 10 ? '0' + minutes : minutes} ${period}`;
         }
 
         // Update countdowns every second
