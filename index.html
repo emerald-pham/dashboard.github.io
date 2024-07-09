@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ferrari Timeline & Dew Point Dashboard</title>
+    <title>Ferrari Timeline Dashboard</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -15,7 +15,7 @@
             margin: 0;
             background-color: #f0f0f0;
         }
-        .countdown, .dew-point, .explanation, .details {
+        .countdown, .explanation, .details {
             background: #fff;
             padding: 20px;
             margin: 10px;
@@ -69,20 +69,6 @@
         <h1>Countdown to Head Over to Switch Ferrari Timeline to Normal Mode</h1>
         <p id="normal-mode"></p>
         <p>Counting down to 13:45</p>
-    </div>
-
-    <div class="dew-point">
-        <h1>Current Dew Point in 33884</h1>
-        <p id="dew-point"></p>
-        <p>High: <span id="high-dew-point"></span> at <span id="high-dew-time"></span></p>
-        <p>Low: <span id="low-dew-point"></span> at <span id="low-dew-time"></span></p>
-        <div class="scale">
-            <div class="oppressive">Oppressive</div>
-            <div class="very-humid">Very Humid</div>
-            <div class="humid">Humid</div>
-            <div class="comfortable">Comfortable</div>
-            <div class="dry">Dry</div>
-        </div>
     </div>
 
     <div class="explanation">
@@ -148,21 +134,6 @@
                     const current = data.current;
                     const forecast = data.forecast.forecastday[0].hour;
 
-                    // Dew Point
-                    const dewPointC = current.dewpoint_c;
-                    const dewPointF = (dewPointC * 9/5) + 32;
-                    document.getElementById('dew-point').innerText = `${dewPointC.toFixed(1)}°C / ${dewPointF.toFixed(1)}°F`;
-
-                    const highDewPoint = Math.max(...forecast.map(hour => hour.dewpoint_c));
-                    const lowDewPoint = Math.min(...forecast.map(hour => hour.dewpoint_c));
-                    const highDewTime = forecast.find(hour => hour.dewpoint_c === highDewPoint).time.split(' ')[1];
-                    const lowDewTime = forecast.find(hour => hour.dewpoint_c === lowDewPoint).time.split(' ')[1];
-
-                    document.getElementById('high-dew-point').innerText = `${highDewPoint.toFixed(1)}°C / ${(highDewPoint * 9/5 + 32).toFixed(1)}°F`;
-                    document.getElementById('high-dew-time').innerText = highDewTime;
-                    document.getElementById('low-dew-point').innerText = `${lowDewPoint.toFixed(1)}°C / ${(lowDewPoint * 9/5 + 32).toFixed(1)}°F`;
-                    document.getElementById('low-dew-time').innerText = lowDewTime;
-
                     // Temperature
                     const currentTempC = current.temp_c;
                     const currentTempF = current.temp_f;
@@ -181,21 +152,6 @@
                     // Humidity
                     const humidity = current.humidity;
                     document.getElementById('current-humidity').innerText = `Humidity: ${humidity}%`;
-
-                    const scale = document.querySelector('.scale');
-                    scale.querySelectorAll('div').forEach(div => div.style.border = 'none');
-
-                    if (dewPointF >= 75) {
-                        scale.querySelector('.oppressive').style.border = '2px solid black';
-                    } else if (dewPointF >= 70) {
-                        scale.querySelector('.very-humid').style.border = '2px solid black';
-                    } else if (dewPointF >= 60) {
-                        scale.querySelector('.humid').style.border = '2px solid black';
-                    } else if (dewPointF >= 50) {
-                        scale.querySelector('.comfortable').style.border = '2px solid black';
-                    } else {
-                        scale.querySelector('.dry').style.border = '2px solid black';
-                    }
                 })
                 .catch(error => console.error('Error fetching weather data:', error));
         }
