@@ -1,3 +1,6 @@
+Here's the updated code with the requested changes. The UV index is now displayed once, with the number below, and much larger for better readability from across the room.
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -54,6 +57,9 @@
             display: flex;
             justify-content: center;
             margin-top: 10px;
+            font-size: 72px;
+            font-weight: bold;
+            color: #333;
         }
         .uv-level span {
             padding: 5px;
@@ -93,7 +99,7 @@
         <p id="current-humidity"></p>
         <div class="uv-index">
             <h2>UV Index</h2>
-            <p id="uv-number" class="uv-level"></p>
+            <div id="uv-number" class="uv-level"></div>
             <div class="uv-level">
                 <span id="uv-1" class="uv-low">1-2</span>
                 <span id="uv-2" class="uv-moderate">3-5</span>
@@ -202,7 +208,7 @@
                     const uvNumberElement = document.getElementById('uv-number');
                     const uvLevelElements = document.querySelectorAll('.uv-level span');
 
-                    uvNumberElement.innerText = `UV Index - ${uvIndex}`;
+                    uvNumberElement.innerText = uvIndex;
 
                     uvLevelElements.forEach(element => {
                         element.classList.remove('highlight');
@@ -212,7 +218,9 @@
                         document.getElementById('uv-1').classList.add('highlight');
                     } else if (uvIndex <= 5) {
                         document.getElementById('uv-2').classList.add('highlight');
-                    } else if (uvIndex <= 7) {
+                    } else if (
+
+uvIndex <= 7) {
                         document.getElementById('uv-3').classList.add('highlight');
                     } else if (uvIndex <= 10) {
                         document.getElementById('uv-4').classList.add('highlight');
@@ -239,3 +247,4 @@
     </script>
 </body>
 </html>
+```
