@@ -1,4 +1,4 @@
-Here's the updated code with the requested changes. The UV index is now displayed once, with the number below, and much larger for better readability from across the room.
+Sure! I've fixed the typos and made the UV index color bars normal-sized. Additionally, I've added a drop shadow to the numbers on the UV index color bars. Here is the updated code:
 
 ```html
 <!DOCTYPE html>
@@ -62,11 +62,12 @@ Here's the updated code with the requested changes. The UV index is now displaye
             color: #333;
         }
         .uv-level span {
-            padding: 5px;
+            padding: 10px;
             color: white;
             font-weight: bold;
-            width: 50px;
+            width: 60px;
             text-align: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
         .uv-low { background-color: #4caf50; }
         .uv-moderate { background-color: #ffeb3b; color: black; }
@@ -215,12 +216,12 @@ Here's the updated code with the requested changes. The UV index is now displaye
                     });
 
                     if (uvIndex <= 2) {
-                        document.getElementById('uv-1').classList.add('highlight');
+                        document.getElementById('uv-1').classList.add('highlight
+
+');
                     } else if (uvIndex <= 5) {
                         document.getElementById('uv-2').classList.add('highlight');
-                    } else if (
-
-uvIndex <= 7) {
+                    } else if (uvIndex <= 7) {
                         document.getElementById('uv-3').classList.add('highlight');
                     } else if (uvIndex <= 10) {
                         document.getElementById('uv-4').classList.add('highlight');
@@ -247,3 +248,4 @@ uvIndex <= 7) {
     </script>
 </body>
 </html>
+```
