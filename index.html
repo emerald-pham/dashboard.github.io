@@ -70,6 +70,7 @@
         <p>High Temperature: <span id="high-temp"></span> at <span id="high-temp-time"></span></p>
         <p>Low Temperature: <span id="low-temp"></span> at <span id="low-temp-time"></span></p>
         <p id="current-humidity"></p>
+        <p id="current-uv-index"></p>
     </div>
 
     <script>
@@ -164,6 +165,10 @@
                     // Humidity
                     const humidity = current.humidity;
                     document.getElementById('current-humidity').innerText = `Humidity: ${humidity}%`;
+
+                    // UV Index
+                    const uvIndex = current.uv;
+                    document.getElementById('current-uv-index').innerText = `UV Index: ${uvIndex}`;
                 })
                 .catch(error => console.error('Error fetching weather data:', error));
         }
