@@ -65,6 +65,14 @@
             color: white;
             border-radius: 5px;
             text-align: center;
+            position: relative;
+        }
+        .uv-box span {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 18px;
         }
         .uv-low {
             background-color: #4caf50;
@@ -81,6 +89,9 @@
         }
         .uv-extreme {
             background-color: #9c27b0;
+        }
+        .highlighted {
+            border: 3px solid #000;
         }
     </style>
 </head>
@@ -107,11 +118,11 @@
         <p id="current-humidity"></p>
         <p id="current-uv-index" class="uv-index"></p>
         <div class="uv-index-range">
-            <div class="uv-box uv-low">Low (0-2)</div>
-            <div class="uv-box uv-moderate">Moderate (3-5)</div>
-            <div class="uv-box uv-high">High (6-7)</div>
-            <div class="uv-box uv-very-high">Very High (8-10)</div>
-            <div class="uv-box uv-extreme">Extreme (11+)</div>
+            <div id="uv-low" class="uv-box uv-low">Low (0-2)<span></span></div>
+            <div id="uv-moderate" class="uv-box uv-moderate">Moderate (3-5)<span></span></div>
+            <div id="uv-high" class="uv-box uv-high">High (6-7)<span></span></div>
+            <div id="uv-very-high" class="uv-box uv-very-high">Very High (8-10)<span></span></div>
+            <div id="uv-extreme" class="uv-box uv-extreme">Extreme (11+)<span></span></div>
         </div>
     </div>
 
@@ -211,21 +222,36 @@
                     // UV Index
                     const uvIndex = current.uv;
                     document.getElementById('current-uv-index').innerText = `UV Index: ${uvIndex}`;
-                    let uvColor;
-                    if (uvIndex <= 2) {
-                        uvColor = '#4caf50'; // Low
-                    } else if (uvIndex <= 5) {
-                        uvColor = '#ffeb3b'; // Moderate
-                    } else if (uvIndex <= 7) {
-                        uvColor = '#ff9800'; // High
-                    } else if (uvIndex <= 10) {
-                        uvColor = '#f44336'; // Very High
-                    } else {
-                        uvColor = '#9c27b0'; // Extreme
-                    }
-                    document.getElementById('current-uv-index').style.backgroundColor = uvColor;
+                    
+                    // Highlight the UV index box and display the UV value inside it
+                    highlightUVIndexBox(uvIndex);
                 })
                 .catch(error => console.error('Error fetching weather data:', error));
+        }
+
+        function highlightUVIndexBox(uvIndex) {
+            const uvBoxes = document.querySelectorAll('.uv-box');
+            uvBoxes.forEach(box => {
+                box.classList.remove('highlighted');
+                box.querySelector('span').innerText = '';
+            });
+
+            let uvBoxId;
+            if (uvIndex <= 2) {
+                uvBoxId = 'uv-low';
+            } else if (uvIndex <= 5) {
+                uvBoxId = 'uv-moderate';
+            } else if (uvIndex <= 7) {
+                uvBoxId = 'uv-high';
+            } else if (uvIndex <= 10) {
+                uvBoxId = 'uv-very-high';
+            } else {
+                uvBoxId = 'uv-extreme';
+            }
+
+            const uvBox = document.getElementById(uvBoxId);
+            uvBox.classList.add('highlighted');
+            uvBox.querySelector('span').innerText = uvIndex;
         }
 
         function formatTime(time24) {
