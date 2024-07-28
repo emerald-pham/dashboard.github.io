@@ -54,6 +54,34 @@
             border-radius: 5px;
             display: inline-block;
         }
+        .uv-index-range {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        .uv-box {
+            width: 18%;
+            padding: 10px;
+            color: white;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .uv-low {
+            background-color: #4caf50;
+        }
+        .uv-moderate {
+            background-color: #ffeb3b;
+            color: black;
+        }
+        .uv-high {
+            background-color: #ff9800;
+        }
+        .uv-very-high {
+            background-color: #f44336;
+        }
+        .uv-extreme {
+            background-color: #9c27b0;
+        }
     </style>
 </head>
 <body>
@@ -78,6 +106,13 @@
         <p>Low Temperature: <span id="low-temp"></span> at <span id="low-temp-time"></span></p>
         <p id="current-humidity"></p>
         <p id="current-uv-index" class="uv-index"></p>
+        <div class="uv-index-range">
+            <div class="uv-box uv-low">Low (0-2)</div>
+            <div class="uv-box uv-moderate">Moderate (3-5)</div>
+            <div class="uv-box uv-high">High (6-7)</div>
+            <div class="uv-box uv-very-high">Very High (8-10)</div>
+            <div class="uv-box uv-extreme">Extreme (11+)</div>
+        </div>
     </div>
 
     <script>
