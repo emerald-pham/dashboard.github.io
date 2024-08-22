@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Human of the Day</title>
+    <style>
+        body {
+            font-family: Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+            background-color: #f0f0f0;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        p {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        #countdown {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Randomly chosen human (randomly chosen!) of the day!</h1>
+    <h2>(totally not chosen by a robot throwing darts at a simulated dartboard)</h2>
+    <p>This was brought to you by NOT A COMPUTER</p>
+    <h1 id="person"></h1>
+    <div id="countdown"></div>
+
+    <script>
+        const people = [
+            "Michael Marks the spot",
+            "Emerald (the person who created the random name generator)",
+            "Keston Beston",
+            "Austin Bennet There, Done That",
+            "Joshua Guilford",
+            "Joe Guilford, “Scene It?” enthusiast",
+            "Alberto Menendez",
+            "Jasper, per chance?",
+            "Ashley Newberg",
+            "Tony!",
+            "Shelby",
+            "Francisco",
+            "Scott Sheplee",
+            "Adam King",
+            "Andy",
+            "Riley",
+            "Christopher Salmontrout",
+            "John Walterfalls",
+            "Adam Basta",
+            "Caleb",
+            "Hannah",
+            "Chelsea",
+            "Gavin",
+            "Royal Colebut",
+            "Tyler, the Creator",
+            "Munzke",
+            "Erik",
+            "Connor Awake",
+            "Beaudacious",
+            "Ashton Bastion",
+            "Joseph Albano",
+            "Jeff Campese",
+            "Ricky, Shop Master"
+        ];
+
+        function getPersonOfTheDay() {
+            const now = new Date();
+            const startOfYear = new Date(now.getFullYear(), 0, 1);
+            const daysSinceStart = Math.floor((now - startOfYear) / (1000 * 60 * 60 * 24));
+            return people[daysSinceStart % people.length];
+        }
+
+        function updateCountdown() {
+            const now = new Date();
+            const nextMidnight = new Date(now);
+            nextMidnight.setHours(24, 0, 0, 0); // Set time to next midnight
+
+            const diff = nextMidnight - now;
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            document.getElementById("countdown").textContent =
+                `Next person in: ${hours}h ${minutes}m ${seconds}s`;
+
+            // Update every second
+            setTimeout(updateCountdown, 1000);
+        }
+
+        // Initialize
+        document.getElementById("person").textContent = getPersonOfTheDay();
+        updateCountdown();
+    </script>
+</body>
+
+</html>
