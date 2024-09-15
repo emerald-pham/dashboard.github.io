@@ -59,7 +59,6 @@
             "Jasper, per chance?",
             "Ashley Newberg",
             "Tony!",
-            "Shelby",
             "Francisco",
             "Scott Sheplee",
             "Adam King",
@@ -72,7 +71,6 @@
             "Hannah",
             "Chelsea",
             "Gavin",
-            "Royal Colebut",
             "Tyler, the Creator",
             "Munzke",
             "Erik",
@@ -81,20 +79,26 @@
             "Ashton Bastion",
             "Joseph Albano",
             "Jeff Campese",
-            "Ricky, Shop Master"
+            "Ricky, Shop Master",
+            "Dot Com Kamron",
+            "Aiden Pierce, Vigilante"
         ];
+
+        function getDayOfYear(date) {
+            const startOfYear = new Date(Date.UTC(date.getFullYear(), 0, 0));
+            const diff = date - startOfYear + ((startOfYear.getTimezoneOffset() - date.getTimezoneOffset()) * 60 * 1000);
+            return Math.floor(diff / (1000 * 60 * 60 * 24));
+        }
 
         function getPersonOfTheDay() {
             const now = new Date();
-            const startOfYear = new Date(now.getFullYear(), 0, 1);
-            const daysSinceStart = Math.floor((now - startOfYear) / (1000 * 60 * 60 * 24));
-            return people[daysSinceStart % people.length];
+            const dayOfYear = getDayOfYear(now);
+            return people[dayOfYear % people.length];
         }
 
         function updateCountdown() {
             const now = new Date();
-            const nextMidnight = new Date(now);
-            nextMidnight.setHours(24, 0, 0, 0); // Set time to next midnight
+            const nextMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
 
             const diff = nextMidnight - now;
             const hours = Math.floor(diff / (1000 * 60 * 60));
